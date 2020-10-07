@@ -1,5 +1,5 @@
 
-
+'use strict';
 const DealService = {
     getAllDeals(knex) {
         return knex.select('*').from('deals_table')
