@@ -21,7 +21,7 @@ app.use(cors());
 app.use('/deals', dealRouter);
 
 
-app.get('/', (req, res) => {res.send('Hello, boilerplate!');});
+app.get('/', (req, res) => {res.send('Launched!');});
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
