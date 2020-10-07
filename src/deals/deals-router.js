@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const xss = require('xss');
 const DealServices = require('./deals-service');
+const jsonBodyParser = express.json();
 
 const dealRouter = express.Router();
 const serializeDeal = (deal) => ({
@@ -25,7 +26,7 @@ dealRouter
       })
       .catch(next);
   })
-  .post((req, res, next) => {
+  .post(jsonBodyParser, (req, res, next) => {
     const { name, content, day, distance, price } = req.body;
     const newDeal = { name, content, day, distance, price };
 
