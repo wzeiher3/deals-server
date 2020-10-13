@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const xss = require('xss');
 const DealServices = require('./deals-service');
+const { requireAuth } = require('../middleware/jwt-auth')
 const jsonBodyParser = express.json();
 
 const dealRouter = express.Router();
@@ -18,7 +19,8 @@ const serializeDeal = (deal) => ({
 
 dealRouter
   .route('/')
-  .get((req, res, next) => {
+  .all(requireAuth)
+  .get( (req, res, next) => {
     const knexInstance = req.app.get('db');
     DealServices.getAllDeals(knexInstance)
       .then((deals) => {
@@ -26,7 +28,7 @@ dealRouter
       })
       .catch(next);
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post( jsonBodyParser, (req, res, next) => {
     const { name, content, day, distance, price } = req.body;
     const newDeal = { name, content, day, distance, price };
 
@@ -38,6 +40,8 @@ dealRouter
         });
       }
     }
+
+    newDeal.user_id = req.user.id;
 
     return DealServices.insertDeal(req.app.get('db'), newDeal)
       .then((deal) => {
@@ -51,6 +55,7 @@ dealRouter
 
 dealRouter
   .route('/:deal_id')
+  .all(requireAuth)
   .all((req, res, next) => {
     DealServices.getById(req.app.get('db'), req.params.deal_id)
       .then((deal) => {

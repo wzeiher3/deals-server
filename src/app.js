@@ -7,6 +7,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const dealRouter = require('./deals/deals-router');
+const authRouter = require('./auth/auth-router');
+const usersRouter = require('./users/users-router');
 const app = express();
 
 const morganOption = (NODE_ENV === 'production')
@@ -19,6 +21,8 @@ app.use(cors());
 
 
 app.use('/deals', dealRouter);
+app.use('/login', authRouter);
+app.use('/users', usersRouter);
 
 
 app.get('/', (req, res) => {res.send('Launched!');});

@@ -1,6 +1,6 @@
 
 'use strict';
-const DealService = {
+const DealServices = {
     getAllDeals(knex) {
         return knex.select('*').from('deals_table')
     },
@@ -36,4 +36,4 @@ const DealService = {
     }
 }
 
-module.exports = DealService
+module.exports = DealServices;
