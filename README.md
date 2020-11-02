@@ -8,6 +8,21 @@ Run the tests `npm test`
 
 ## ENDPOINTS
 
+### POST /users
+    
+    // req.body
+    {
+      username: String,
+      password: String
+    }
+
+    // res.body
+    {
+      id: Integer,
+      username: String,
+    }
+
+
 ### POST /login
  
     // req.body
@@ -29,10 +44,15 @@ Run the tests `npm test`
 
     // res.body
     {
-      questions: [
+      deal: [
         {
           id: Integer,
-          question: String
+          name: String, 
+          price: Integer, 
+          day: String, 
+          user_id: Integer, 
+          content: String, 
+          distance: Integer
         }
       ],
     }
@@ -47,8 +67,13 @@ Run the tests `npm test`
 
     // res.body
     {
-      id: Integer,
-      question: String
+       id: Integer,
+          name: String, 
+          price: Integer, 
+          day: String, 
+          user_id: Integer, 
+          content: String, 
+          distance: Integer
     }
 
 
