@@ -31,17 +31,22 @@ describe('Testing Deals', function() {
     context('Given there are deals in the database', () => {
       const testDeals = helpers.makeDealsArray()
       
-      beforeEach('insert deals', () => {
+      beforeEach('insert deals and answers', () => {
         return db
-          .into('deals_table')
-          .insert(testDeals)         
-      })
+          .into('deals_users')
+          .insert(testUsers)
+          .then(() => {
+            return db
+              .into('deals_table')
+              .insert(testDeals);
+          });
+      });
 
       it('responds with 200 and all of the deals', () => {
         return supertest(app)
           .get('/deals')
           .set('Authorization', helpers.makeAuthHeader(testUser))
-          .expect(401, { error: 'Unauthorized request' })
+          .expect(200, testDeals)
       })
     })
   })
@@ -62,33 +67,36 @@ describe('Testing Deals', function() {
     context('Given there are deals in the database', () => {
       const testDeals = helpers.makeDealsArray()
 
-      beforeEach('insert deals', () => {
+      beforeEach('insert deals and answers', () => {
         return db
-          .into('deals_table')
-          .insert(testDeals);
-      })
+          .into('deals_users')
+          .insert(testUsers)
+          .then(() => {
+            return db
+              .into('deals_table')
+              .insert(testDeals);
+          });
+      });
 
       it('responds with 200 and the specified deal', () => {
-        const dealId = 2
+        const dealId = 1
         const expectedDeal = testDeals[dealId - 1]
         return supertest(app)
           .get(`/deals/${dealId}`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
-          .expect(401, { error: 'Unauthorized request' })
+          .expect(200, expectedDeal)
       })
       
     });   
   })
   describe(`POST /login`, () => {
     const testUsers = helpers.makeUsersArray()
-    const testDeals = helpers.makeDealsArray()
     const testUser = testUsers[0]
     
     beforeEach('insert users', () =>
-      helpers.seedDealsTables(
+      helpers.seedUsers(
         db,
-        testUsers, 
-        testDeals
+        testUsers
       )
     )
 
@@ -108,6 +116,26 @@ describe('Testing Deals', function() {
           .send(loginAttemptBody)
           .expect(400, {
             error: `Missing '${field}' in request body`,
+          })
+      })
+      it(`responds 200 and JWT auth token using secret when valid credentials`, () => {
+        const userValidCreds = {
+          user_name: testUser.user_name,
+          password: testUser.password,
+        }
+        const expectedToken = jwt.sign(
+          { user_id: testUser.id },
+          process.env.JWT_SECRET,
+          {
+            subject: testUser.user_name,
+            algorithm: 'HS256',
+          }
+        )
+        return supertest(app)
+          .post('/login')
+          .send(userValidCreds)
+          .expect(200, {
+            authToken: expectedToken,
           })
       })
     })
