@@ -1,8 +1,8 @@
-'use strict';
-const express = require('express');
-const AuthService = require('./auth-service');
-const authRouter = express.Router();
-const jsonBodyParser = express.json();
+'use strict'
+const express = require('express')
+const AuthService = require('./auth-service')
+const authRouter = express.Router()
+const jsonBodyParser = express.json()
 
 authRouter
   .post('/', jsonBodyParser, (req, res, next) => {
